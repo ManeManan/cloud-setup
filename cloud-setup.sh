@@ -14,7 +14,7 @@
             cd /root/ && git clone https://github.com/freqtrade/freqtrade.git
             cd /root/freqtrade/
             git checkout stable
-            curl -o setup.sh https://raw.githubusercontent.com/Mananlearn/cloud-setup/main/setup.sh
+            curl -o setup.sh https://raw.githubusercontent.com/MAlphaGu/cloud-setup/main/setup.sh
             chmod 777 setup.sh
             sudo -H ./setup.sh -i
 
@@ -25,7 +25,7 @@
 
             #Supervisor File
             cd /etc/supervisor/conf.d/
-            curl -o god.conf https://raw.githubusercontent.com/Mananlearn/cloud-setup/main/god.conf
+            curl -o god.conf https://raw.githubusercontent.com/MAlphaGu/cloud-setup/main/god.conf
             /root/freqtrade/.env/bin/pip install ta
 
         elif [[ $REPLY =~ ^[Nn]$ ]]; then
@@ -40,13 +40,13 @@
             cd /root/ && git clone https://github.com/freqtrade/freqtrade.git
             cd /root/freqtrade/
             git checkout stable
-            curl -o setup.sh https://raw.githubusercontent.com/Mananlearn/cloud-setup/main/setup.sh
+            curl -o setup.sh https://raw.githubusercontent.com/MAlphaGu/cloud-setup/main/setup.sh
             chmod 777 setup.sh
             sudo -H ./setup.sh -i
             cd /root/freqtrade/user_data/strategies/
             curl -o NostalgiaForInfinityX.py https://raw.githubusercontent.com/iterativv/NostalgiaForInfinity/main/NostalgiaForInfinityX.py
             cd /etc/supervisor/conf.d/
-            curl -o nos.conf https://raw.githubusercontent.com/Mananlearn/cloud-setup/main/nos.conf
+            curl -o nos.conf https://raw.githubusercontent.com/MAlphaGu/cloud-setup/main/nos.conf
 
       fi
 
