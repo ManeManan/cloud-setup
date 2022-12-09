@@ -50,13 +50,49 @@ function updateenv() {
     SYS_ARCH=$(uname -m)
     echo "pip install in-progress. Please wait..."
     ${PYTHON} -m pip install --upgrade pip
-    REQUIREMENTS=requirements.txt
+    read -p "Do you want to install dependencies for dev [y/N]? "
+    dev=$REPLY
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        REQUIREMENTS=requirements-dev.txt
+    else
+        REQUIREMENTS=requirements.txt
+    fi
     REQUIREMENTS_HYPEROPT=""
     REQUIREMENTS_PLOT=""
-    REQUIREMENTS_PLOT="-r requirements-plot.txt"
-    REQUIREMENTS_HYPEROPT="-r requirements-hyperopt.txt"
+     read -p "Do you want to install plotting dependencies (plotly) [y/N]? "
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        REQUIREMENTS_PLOT="-r requirements-plot.txt"
+    fi
+    if [ "${SYS_ARCH}" == "armv7l" ] || [ "${SYS_ARCH}" == "armv6l" ]; then
+        echo "Detected Raspberry, installing cython, skipping hyperopt installation."
+        ${PYTHON} -m pip install --upgrade cython
+    else
+        # Is not Raspberry
+        read -p "Do you want to install hyperopt dependencies [y/N]? "
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            REQUIREMENTS_HYPEROPT="-r requirements-hyperopt.txt"
+        fi
+    fi
 
-    ${PYTHON} -m pip install --upgrade -r ${REQUIREMENTS} ${REQUIREMENTS_HYPEROPT} ${REQUIREMENTS_PLOT}
+    REQUIREMENTS_FREQAI=""
+    REQUIREMENTS_FREQAI_RL=""
+    read -p "Do you want to install dependencies for freqai [y/N]? "
+    dev=$REPLY
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        REQUIREMENTS_FREQAI="-r requirements-freqai.txt --use-pep517"
+        read -p "Do you also want dependencies for freqai-rl (~700mb additional space required) [y/N]? "
+        dev=$REPLY
+        if [[ $REPLY =~ ^[Yy]$ ]]
+        then
+            REQUIREMENTS_FREQAI="-r requirements-freqai-rl.txt"
+        fi
+    fi
+
+    ${PYTHON} -m pip install --upgrade -r ${REQUIREMENTS} ${REQUIREMENTS_HYPEROPT} ${REQUIREMENTS_PLOT} ${REQUIREMENTS_FREQAI} ${REQUIREMENTS_FREQAI_RL}
     if [ $? -ne 0 ]; then
         echo "Failed installing dependencies"
         exit 1
@@ -158,7 +194,28 @@ function update() {
 # Reset Develop or Stable branch
 function reset() {
     echo_block "Resetting branch and virtual env"
-    git reset --hard origin/stable
+
+    if [ "1" == $(git branch -vv |grep -cE "\* develop|\* stable") ]
+    then
+
+        read -p "Reset git branch? (This will remove all changes you made!) [y/N]? "
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+
+            git fetch -a
+
+            if [ "1" == $(git branch -vv | grep -c "* develop") ]
+            then
+                echo "- Hard resetting of 'develop' branch."
+                git reset --hard origin/develop
+            elif [ "1" == $(git branch -vv | grep -c "* stable") ]
+            then
+                echo "- Hard resetting of 'stable' branch."
+                git reset --hard origin/stable
+            fi
+        fi
+    else
+        echo "Reset ignored because you are not on 'stable' or 'develop'."
+    fi
 
     if [ -d ".env" ]; then
         echo "- Deleting your previous virtual env"
