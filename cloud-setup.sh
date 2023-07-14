@@ -1,5 +1,5 @@
 #!/bin/bash
-    read -p "VolatilitySystem Or Nostalgia ?  [Gg/Nn]? "
+    read -p "FlawlessVictory Or Nostalgia ?  [Vv/Nn]? "
 
         if [[ $REPLY =~ ^[Vv]$ ]]; then
             # Update Repositores!!!
@@ -21,11 +21,11 @@
 
             #Download Strategy
             cd /root/freqtrade/user_data/strategies/
-            curl -o VolatilitySystem.py https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/futures/VolatilitySystem.py
+            curl -o FlawlessVictory.py https://raw.githubusercontent.com/ManeManan/cloud-setup/main/FlawlessVictory.py
 
             #Supervisor File
             cd /etc/supervisor/conf.d/
-            curl -o god.conf https://raw.githubusercontent.com/ManeManan/cloud-setup/main/god.conf
+            curl -o fv.conf https://raw.githubusercontent.com/ManeManan/cloud-setup/main/fv.conf
             /root/freqtrade/.env/bin/pip install ta
 
         elif [[ $REPLY =~ ^[Nn]$ ]]; then
